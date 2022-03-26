@@ -23,8 +23,14 @@ export default function ActivityDetails({detailActivity, detail_cancelSelectActi
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2'>
-                    <Button onClick={() => detail_openForm(detailActivity.id)} basic color="blue" content="Edit" />
-                    <Button onClick={detail_cancelSelectActivity} basic color="grey" content="Cancel" />
+                    <Button 
+                        onClick={() => detail_openForm(detailActivity.id)} 
+                        basic color="blue" content="Edit" 
+                    />
+                    <Button 
+                        onClick={detail_cancelSelectActivity} 
+                        basic color="grey" content="Cancel" 
+                    />
                 </Button.Group>
             </Card.Content>
         </Card>
