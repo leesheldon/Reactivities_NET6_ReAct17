@@ -4,14 +4,20 @@ import ReactDOM from 'react-dom';
 import './app/layout/styles.css';
 import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
+import { store, StoreContext } from './app/stores/store';
 
 ReactDOM.render(
+  <StoreContext.Provider value={store}>
+      <App />
+  </StoreContext.Provider>,
+  
+  // comment out StrictMode because there is error with current Semantic version
   // <React.StrictMode>
   //   <App />
   // </React.StrictMode>,
-  // comment out StrictMode because there is error with Semantic
   
-  <App />,
+  
+  
   document.getElementById('root')
 );
 

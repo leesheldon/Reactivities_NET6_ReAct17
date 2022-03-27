@@ -1,26 +1,26 @@
+import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    listActivities: Activity[];
-    list_selectActivity: (id: string) => void;
-    list_deleteActivity: (id: string) => void;
-    list_submitting: boolean;
-}
 
-export default function ActivityList({listActivities, list_selectActivity, list_deleteActivity, list_submitting}: Props) {
+// It is important to have observer(...) here --> if not, the Mobx does not work.
+export default observer(function ActivityList() {
+
+    const {activityStore} = useStore();
+    const {deleteActivity, activitiesByDate, loading} = activityStore;
+
     const [target, setTarget] = useState('');
 
     function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
-        list_deleteActivity(id);
+        deleteActivity(id);
     }
 
     return (
         <Segment>
             <Item.Group divided>
-                {listActivities.map(activity => (
+                {activitiesByDate.map(activity => (
                     <Item key={activity.id}>
                         <Item.Content>
                             <Item.Header as='a'>{activity.title}</Item.Header>
@@ -31,14 +31,14 @@ export default function ActivityList({listActivities, list_selectActivity, list_
                             </Item.Description>
                             <Item.Extra>
                                 <Button 
-                                    onClick={() => list_selectActivity(activity.id)} 
+                                    onClick={() => activityStore.selectActivity(activity.id)} 
                                     floated="right" 
                                     content="View" 
                                     color="blue" 
                                 />
                                 <Button 
                                     name={activity.id}
-                                    loading={list_submitting && target === activity.id} 
+                                    loading={loading && target === activity.id} 
                                     onClick={(e) => handleActivityDelete(e, activity.id)} 
                                     floated="right" 
                                     content="Delete" 
@@ -52,4 +52,4 @@ export default function ActivityList({listActivities, list_selectActivity, list_
             </Item.Group>
         </Segment>
     )
-}
+})

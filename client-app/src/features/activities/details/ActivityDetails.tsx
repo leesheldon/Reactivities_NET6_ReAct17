@@ -1,34 +1,35 @@
 import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    detailActivity: Activity;
-    detail_cancelSelectActivity: () => void;
-    detail_openForm: (id: string) => void;
-}
 
-export default function ActivityDetails({detailActivity, detail_cancelSelectActivity, detail_openForm}: Props) {
+export default function ActivityDetails() {
+    const {activityStore} = useStore();
+    const {selectedActivity: activity, openForm, cancelSelectedActivity} = activityStore;
+
+    if (!activity) return <LoadingComponent />;
+    
     return (
         <Card fluid>
-            <Image src={`/assets/categoryImages/${detailActivity.category}.jpg`} />
+            <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
             <Card.Content>
-            <Card.Header>{detailActivity.title}</Card.Header>
+            <Card.Header>{activity.title}</Card.Header>
             <Card.Meta>
-                <span>{detailActivity.date}</span>
+                <span>{activity.date}</span>
             </Card.Meta>
             <Card.Description>
-                {detailActivity.description}
+                {activity.description}
             </Card.Description>
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2'>
                     <Button 
-                        onClick={() => detail_openForm(detailActivity.id)} 
+                        onClick={() => openForm(activity.id)} 
                         basic color="blue" content="Edit" 
                     />
                     <Button 
-                        onClick={detail_cancelSelectActivity} 
+                        onClick={cancelSelectedActivity} 
                         basic color="grey" content="Cancel" 
                     />
                 </Button.Group>
