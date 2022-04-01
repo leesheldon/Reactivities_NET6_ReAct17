@@ -49,12 +49,14 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("This email address has been used to register!");
+                ModelState.AddModelError("email", "This email address has been used to register!");
+                return ValidationProblem();
             }
 
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("This user name has been used to register!");
+                ModelState.AddModelError("username", "This user name has been used to register!");
+                return ValidationProblem();
             }
 
             var user = new AppUser
@@ -66,7 +68,10 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (!result.Succeeded) return BadRequest("Failed to register new user!");
+            if (!result.Succeeded)
+            {
+                return BadRequest("Failed to register new user!");
+            } 
 
             return CreateUserObject(user);
         }
