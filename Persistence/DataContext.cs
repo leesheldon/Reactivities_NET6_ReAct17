@@ -10,4 +10,23 @@ public class DataContext : IdentityDbContext<AppUser>
     }
 
     public DbSet<Activity> Activities { get; set; }
+    public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<ActivityAttendee>(x => x.HasKey(y => new {y.AppUserId, y.ActivityId}));
+
+        builder.Entity<ActivityAttendee>()
+            .HasOne(x => x.AppUser)
+            .WithMany(y => y.Activities)
+            .HasForeignKey(k => k.AppUserId);
+
+        builder.Entity<ActivityAttendee>()
+            .HasOne(x => x.Activity)
+            .WithMany(y => y.Attendees)
+            .HasForeignKey(k => k.ActivityId);
+    }
+
 }
