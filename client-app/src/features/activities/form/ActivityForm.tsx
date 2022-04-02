@@ -12,26 +12,17 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import { categoryOptions } from "../../../app/common/options/categoryOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 
 
 export default observer(function ActivityForm() {
 
     const history = useHistory();
     const {activityStore} = useStore();
-    const {createActivity, updateActivity, 
-        loading, loadActivity, loadingInitial} = activityStore;
+    const {createActivity, updateActivity, loadActivity, loadingInitial} = activityStore;
     const {id} = useParams<{id: string}>();
 
-    const [activity, setActivity] = useState<Activity>({
-        id: '',
-        title: '',
-        category: '',
-        description: '',
-        date: null,
-        city: '',
-        venue: ''
-    });
+    const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
     const validationSchema = Yup.object({
         title: Yup.string().required('The activity title is required!'),
@@ -43,16 +34,11 @@ export default observer(function ActivityForm() {
     });
     
     useEffect(() => {
-        if (id) loadActivity(id).then(response => setActivity(response!));
-    }, [id, loadActivity]);
-    // (response!) --> A new ! post-fix expression operator may be used to assert that its operand is non-null and non-undefined 
-        // in contexts where the type checker is unable to conclude that fact. Specifically, the operation x! produces a value of 
-        // the type of x with null and undefined excluded. Similar to type assertions of the forms <T>x and x as T, 
-        // the ! non-null assertion operator is simply removed in the emitted JavaScript code.
-    
+        if (id) loadActivity(id).then(response => setActivity(new ActivityFormValues(response)));
+    }, [id, loadActivity]);   
 
-    function handleFormSubmit(activity: Activity) {
-        if (activity.id.length === 0) {
+    function handleFormSubmit(activity: ActivityFormValues) {
+        if (!activity.id) {
             let newActivity = {
                 ...activity,
                 id: uuid()
@@ -99,7 +85,7 @@ export default observer(function ActivityForm() {
                         <MyTextInput placeholder='Venue' name='venue' />
                         <Button 
                             disabled={isSubmitting || !dirty || !isValid}
-                            loading={loading} positive 
+                            loading={isSubmitting} positive 
                             floated="right" type="submit" content="Submit" 
                         />
                         <Button as={Link} to='/activities' floated="right" type="button" content="Cancel" />
