@@ -25,32 +25,23 @@ app.UseXContentTypeOptions();
 app.UseReferrerPolicy(opt => opt.NoReferrer());
 app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
 app.UseXfo(opt => opt.Deny());
-app.UseCsp(opt => opt
+app.UseCspReportOnly(opt => opt
     .BlockAllMixedContent()
     .StyleSources(s => s.Self().CustomSources(
         "https://fonts.googleapis.com",
-        "sha256-/epqQuRElKW1Z83z1Sg8Bs2MKi99Nrq41Z3fnS2Nrgk=",
-        "sha256-2aahydUs+he2AO0g7YZuG67RGvfE9VXGbycVgIwMnBI=",
-        "sha256-+oGcdj5BhO6SoiIGYIkPOMYi7d2h2Pp/bkJLBfYL+kk="
+        "https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/semantic.min.css"
     ))
     .FontSources(s => s.Self().CustomSources(
-        "https://fonts.gstatic.com", "data:"
+        "https://fonts.gstatic.com",
+        "https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/themes/default/assets/fonts/",
+        "data:"
     ))
     .FormActions(s => s.Self())
     .FrameAncestors(s => s.Self())
     .ImageSources(s => s.Self().CustomSources(
-        "https://res.cloudinary.com",
-        "https://www.facebook.com",
-        "https://platform-lookaside.fbsbx.com",
-        "blob:",
-        "data:"
-        ))
-    .ScriptSources(s => s.Self()
-        .CustomSources(
-            "sha256-HIgflxNtM43xg36bBIUoPTUuo+CXZ319LsTVRtsZ/VU=",
-            "https://connect.facebook.net",
-            "sha256-3x3EykMfFJtFd84iFKuZG0MoGAo5XdRfl3rq3r//ydA="
-        ))
+        "https://res.cloudinary.com"
+    ))
+    .ScriptSources(s => s.Self())
 );
 
 
@@ -72,6 +63,10 @@ else
 
 app.UseRouting();
 
+app.UseDefaultFiles();
+
+app.UseStaticFiles();
+
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
@@ -80,6 +75,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 
